@@ -10,6 +10,9 @@ Version: `0.9.0`
 One-line definition:
 **a design kernel that converts material + cryogenic + electromagnetic/mechanical + quench risk into one readiness omega verdict**.
 
+Interpretation note:
+`0.9.0` should be read as a broad research/design scaffold release, not as a finished plant/lab replacement platform.
+
 ## Philosophy Alignment
 
 - Applies the 00_BRAIN pattern: **physics kernelization + layered expansion**
@@ -41,11 +44,12 @@ What it does not do:
 - `engine_ref_adapter`: payload runner for `superconducting.magnet.readiness`
 - `cli`: `sc-magnet-assess --input-json ... --json`
 
-## Research foundation extensions (v0.3.0)
+## Research foundation extensions
 
 This stack is still not “all superconductivity research,”
 but it now includes three scaffold layers that can serve as a realistic next step for
 superconducting magnet research:
+These expansion lines started as an early scaffold around `v0.3.0` and have been extended incrementally through `0.9.0`.
 
 - `coil_geometry`: winding length, fill proxy, hoop-load index
 - `ac_loss`: dynamic sweep AC-loss screening
@@ -58,7 +62,7 @@ superconducting magnet research:
 - `ramp_profile`: ramp rate and dynamic stability penalty
 - `splice_matrix`: splice-matrix complexity and current-imbalance risk
 - `ramp_dynamics`: induced voltage, dynamic heating, and stability-window screening
-- `material_ranking`: compare and rank multiple candidate materials under the same design point
+- `material_ranking`: a screening layer that compares and ranks multiple candidate materials under the same design point
 
 So the most natural research path from here is:
 
@@ -84,6 +88,9 @@ So the most natural research path from here is:
 
 - `Tc`: critical temperature boundary
 - `Jc`: critical current-density boundary
+- `jc_a_per_mm2_77k` field note:
+  - the name follows an HTS-friendly reference convention
+  - in this stack, treat it as a **reference Jc input** for cross-candidate screening
 - `Bc2`: high-field critical boundary indicator
 - `quench`: normal-zone transition with thermal runaway risk
 - `omega`: normalized 0..1 design health index
@@ -109,6 +116,24 @@ and collapses them into one readiness verdict:
 
 So this observer should be read as:
 **a readiness observer for candidate magnet designs**, not as a plant-floor monitoring runtime.
+
+By contrast, the `pipeline` is the **execution orchestration layer** that calls the evaluation stages in order
+and returns a bundled result set.
+In short:
+
+- `observer` = readiness aggregation / verdict
+- `pipeline` = staged execution flow
+
+## Quench expansion structure
+
+Quench evaluation is intentionally layered:
+
+1. base screening: `safety` (`quench_index`)
+2. propagation layer: `quench_propagation` (NZPV/hotspot proxy)
+3. local heating layer: `joint_resistance`
+4. dump/ramp window layer: `ramp_profile` and `ramp_dynamics`
+
+So quench is not modeled as one scalar only; it is structured to expand across propagation/local-heating/protection-window views.
 
 ## Quick Start
 
@@ -179,6 +204,11 @@ for item in ranking.ranking:
     print(item.rank, item.name, item.screening_score)
 ```
 
+Important:
+
+- `material_ranking` is not an absolute optimizer or final material selector.
+- In the current implementation it should be read as a **same-condition screening/ranking aid** under one cryogenic and design point.
+
 CLI candidate comparison:
 
 ```bash
@@ -200,7 +230,11 @@ Current local verification baseline:
 
 - inside the package root: `14 passed`
 - outside the package root: collection works after adding `tests/conftest.py`
-- coverage: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli/research scaffold
+- coverage:
+  - core: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli
+  - foundation scaffold: geometry/ac_loss/quench_propagation
+  - extended scaffold: joint/uniformity/fatigue
+  - material scaffold: screening/splice/ramp/splice_matrix/ramp_dynamics/ranking
 
 Contract safety guard:
 

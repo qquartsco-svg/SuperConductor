@@ -10,6 +10,9 @@ Version: `0.9.0`
 한 줄 정의:
 **재료(Tc/Jc/Bc2) + 냉각 + 전자기/응력 + quench 위험을 하나의 Ω 판정으로 묶는 설계 커널**.
 
+해석 가이드:
+현재 `0.9.0`은 연구/설계 스캐폴드를 폭넓게 포함한 버전이며, 완성형 실험/공정 대체 엔진을 뜻하지 않는다.
+
 ## 설계 철학 정렬
 
 - 00_BRAIN 철학대로 **물리 법칙 커널화 + 계층 확장**을 적용
@@ -41,10 +44,11 @@ Version: `0.9.0`
 - `engine_ref_adapter`: `superconducting.magnet.readiness` 입력 payload 실행
 - `cli`: `sc-magnet-assess --input-json ... --json`
 
-## 연구 확장 발판 (v0.3.0)
+## 연구 확장 발판
 
 이 스택은 아직 “초전도체 연구 전체”는 아니지만,
 초전도 자석 연구로 나아가기 위한 다음 세 축을 기초 레이어로 올렸습니다.
+이 확장 축은 `v0.3.0` 무렵의 기초 연구 스캐폴딩에서 시작해 현재 `0.9.0`까지 단계적으로 확장됐습니다.
 
 - `coil_geometry`: 권선 길이, fill proxy, hoop load index
 - `ac_loss`: 동적 sweep 조건에서의 AC loss screening
@@ -57,7 +61,7 @@ Version: `0.9.0`
 - `ramp_profile`: 램프 속도와 동적 안정성 penalty
 - `splice_matrix`: splice 행렬 복잡도와 전류 불균형 risk
 - `ramp_dynamics`: 유도전압, 동적 heating, 안정 창(window) screening
-- `material_ranking`: 같은 설계 조건에서 후보 재료군을 비교·랭킹
+- `material_ranking`: 같은 설계 조건에서 후보 재료군을 비교·랭킹하는 screening 레이어
 
 즉 현재 가장 자연스러운 확장 순서는:
 
@@ -83,6 +87,9 @@ Version: `0.9.0`
 
 - `Tc`: 초전도 상태가 유지되는 임계 온도 기준
 - `Jc`: 단면당 허용 가능한 임계 전류 밀도
+- `jc_a_per_mm2_77k` 필드 해석:
+  - HTS 문맥에서 익숙한 기준값 이름을 사용하고 있다.
+  - 본 스택에서는 재료군 간 비교를 위한 **reference Jc input**으로 읽는 것이 안전하다.
 - `Bc2`: 자장 조건에서 초전도성이 무너지기 시작하는 임계 지표
 - `quench`: 국소 정상전도 전이가 확산되며 발열이 커지는 위험 상태
 - `Ω(omega)`: 설계 상태를 0~1로 요약한 건강도 지표
@@ -110,6 +117,25 @@ Version: `0.9.0`
 “운영 중 자석을 계속 감시하는 계측 시스템”이라기보다,
 **후보 설계안이 지금 단계에서 얼마나 build-ready 한가를 종합 판정하는 관찰자**
 로 읽는 것이 정확합니다.
+
+반대로 `pipeline`은 여러 평가 레이어를 실제 순서대로 호출해
+하나의 결과 묶음으로 반환하는 **실행 오케스트레이션 레이어**입니다.
+즉:
+
+- `observer` = readiness 집계/판정
+- `pipeline` = 평가 실행 흐름
+
+## Quench 확장 구조
+
+quench 관련 평가는 한 번에 끝나지 않고 다음 레이어로 확장된다.
+
+1. base screening: `safety`의 `quench_index`
+2. propagation: `quench_propagation`의 NZPV/hotspot proxy
+3. local heating: `joint_resistance` 기반 접합부 발열 위험
+4. dump/ramp window: `ramp_profile`, `ramp_dynamics`와 결합한 보호 여유 확인
+
+즉 현재 구조는 quench를 단일 점수로만 처리하지 않고,
+전파/국소발열/보호창으로 분해해 확장하도록 설계되어 있다.
 
 ## 빠른 시작
 
@@ -180,6 +206,11 @@ for item in ranking.ranking:
     print(item.rank, item.name, item.screening_score)
 ```
 
+중요:
+
+- `material_ranking`은 “절대적인 최적 재료 결정기”가 아닙니다.
+- 현재 구현에서는 **같은 cryo/design 조건 아래에서 후보군을 screening score로 비교하는 보조 판단 레이어**로 읽는 것이 맞습니다.
+
 CLI 후보군 비교:
 
 ```bash
@@ -201,7 +232,11 @@ python3 -m pytest tests/ -q --tb=no
 
 - 패키지 루트 내부: `14 passed`
 - 패키지 루트 외부: `tests/conftest.py` 추가 후 수집 가능
-- 범주: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli/research scaffold
+- 범주:
+  - core: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli
+  - foundation scaffold: geometry/ac_loss/quench_propagation
+  - extended scaffold: joint/uniformity/fatigue
+  - material scaffold: screening/splice/ramp/splice_matrix/ramp_dynamics/ranking
 
 계약층 안전장치:
 

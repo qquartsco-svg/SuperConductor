@@ -13,6 +13,12 @@ One-line definition:
 Interpretation note:
 `0.9.0` should be read as a broad research/design scaffold release, not as a finished plant/lab replacement platform.
 
+Detailed docs:
+
+- version policy: [docs/VERSIONING_POLICY_EN.md](docs/VERSIONING_POLICY_EN.md)
+- physics proxy limits: [docs/PHYSICS_PROXY_LIMITATIONS_EN.md](docs/PHYSICS_PROXY_LIMITATIONS_EN.md)
+- quench layered model: [docs/QUENCH_LAYER_MODEL_EN.md](docs/QUENCH_LAYER_MODEL_EN.md)
+
 ## Philosophy Alignment
 
 - Applies the 00_BRAIN pattern: **physics kernelization + layered expansion**

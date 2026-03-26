@@ -13,6 +13,12 @@ Version: `0.9.0`
 해석 가이드:
 현재 `0.9.0`은 연구/설계 스캐폴드를 폭넓게 포함한 버전이며, 완성형 실험/공정 대체 엔진을 뜻하지 않는다.
 
+상세 문서:
+
+- 버전 정책: [docs/VERSIONING_POLICY.md](docs/VERSIONING_POLICY.md)
+- 물리 프록시 한계: [docs/PHYSICS_PROXY_LIMITATIONS.md](docs/PHYSICS_PROXY_LIMITATIONS.md)
+- quench 레이어 모델: [docs/QUENCH_LAYER_MODEL.md](docs/QUENCH_LAYER_MODEL.md)
+
 ## 설계 철학 정렬
 
 - 00_BRAIN 철학대로 **물리 법칙 커널화 + 계층 확장**을 적용
@@ -47,7 +53,7 @@ Version: `0.9.0`
 ## 연구 확장 발판
 
 이 스택은 아직 “초전도체 연구 전체”는 아니지만,
-초전도 자석 연구로 나아가기 위한 다음 세 축을 기초 레이어로 올렸습니다.
+초전도 자석 연구로 나아가기 위한 다음 연구 축들을 기초 레이어로 올렸습니다.
 이 확장 축은 `v0.3.0` 무렵의 기초 연구 스캐폴딩에서 시작해 현재 `0.9.0`까지 단계적으로 확장됐습니다.
 
 - `coil_geometry`: 권선 길이, fill proxy, hoop load index
@@ -303,7 +309,7 @@ python3 -m superconducting_magnet_stack.cli --input-json examples/material_compa
 - **교육/랩 프리디자인**: 실험 전 파라미터 민감도(온도/장/전류/응력) 사전 점검
 - **의사결정 자동화**: `verdict`와 `quench_recommendation`을 게이트 룰에 연결
 
-## GitHub 배포 가이드 (qquartsco-svg/SuperConductor)
+## GitHub 배포 가이드 (qquartsco-svg/SuperConductor, 처음 배포 시)
 
 ```bash
 cd _staging/Superconducting_Magnet_Stack

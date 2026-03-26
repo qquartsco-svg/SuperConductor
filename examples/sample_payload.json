@@ -1,0 +1,22 @@
+{
+  "material": {
+    "name": "REBCO-like",
+    "tc_k": 92.0,
+    "jc_a_per_mm2_77k": 300.0,
+    "bc2_t": 120.0,
+    "anisotropy": 1.4
+  },
+  "cryo": {
+    "operating_temp_k": 20.0,
+    "heat_load_w": 12.0,
+    "cooling_capacity_w": 30.0
+  },
+  "design": {
+    "target_field_t": 20.0,
+    "operating_current_a": 600.0,
+    "conductor_cross_section_mm2": 8.0,
+    "inductance_h": 1.2,
+    "stored_energy_j": 216000.0,
+    "stress_mpa": 140.0
+  }
+}

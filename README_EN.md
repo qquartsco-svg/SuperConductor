@@ -1,17 +1,17 @@
-> **Korean (canonical):** [README.md](README.md)
+> **English.** Korean (정본): [README.md](README.md)
 
 # Superconducting Magnet Stack
 
 This is not a one-shot “all-superconductor” engine.
 It is an L1 independent stack focused on **superconducting magnet design, evaluation, and readiness verdicts**.
 
-Version: `0.9.0`
+Version: `1.0.0`
 
 One-line definition:
 **a design kernel that converts material + cryogenic + electromagnetic/mechanical + quench risk into one readiness omega verdict**.
 
 Interpretation note:
-`0.9.0` should be read as a broad research/design scaffold release, not as a finished plant/lab replacement platform.
+`1.0.0` should be read as a stabilized five-layer superconducting magnet research/design foundation, not as a finished plant/lab replacement platform.
 
 Detailed docs:
 
@@ -55,7 +55,7 @@ What it does not do:
 This stack is still not “all superconductivity research,”
 but it now includes three scaffold layers that can serve as a realistic next step for
 superconducting magnet research:
-These expansion lines started as an early scaffold around `v0.3.0` and have been extended incrementally through `0.9.0`.
+These expansion lines started as an early scaffold around `v0.3.0` and have been extended incrementally through `1.0.0`.
 
 - `coil_geometry`: winding length, fill proxy, hoop-load index
 - `ac_loss`: dynamic sweep AC-loss screening
@@ -70,6 +70,20 @@ These expansion lines started as an early scaffold around `v0.3.0` and have been
 - `ramp_dynamics`: induced voltage, dynamic heating, and stability-window screening
 - `material_ranking`: a screening layer that compares and ranks multiple candidate materials under the same design point
 
+## v1.0.0 Five-Layer Structure
+
+The point of `1.0.0` is not “all superconductivity solved.” It means the stack now has a stable five-layer foundation for reading superconducting magnets as a research/design system.
+
+| Layer | Modules | Role |
+|---|---|---|
+| Layer 1 — Physics Foundation | `material_database`, `critical_state`, `pinning`, `strain_effects` | material families, critical-state proxies, vortex pinning, strain derating |
+| Layer 2 — Transient Dynamics | `quench_dynamics`, `protection_system` | RK4 quench dynamics, MIIT/dump resistor/protection screening |
+| Layer 3 — Multi-Physics | `ac_loss_decomposition`, `multiphysics_engine` | AC-loss decomposition and thermal/electromagnetic/mechanical proxy rollup |
+| Layer 4 — Research Tools | `sensitivity_analysis`, `uncertainty_quantification`, `fault_tolerance` | sensitivity, uncertainty, and fault-tolerance screening |
+| Layer 5 — Application Presets | `application_presets` | LHC/HL-LHC/SPARC/MRI/SMES-style reference comparisons |
+
+These layers do not replace high-fidelity FEM or lab qualification. They provide a lower-level readiness language for MRF, Space Gate, Fusion, MRI, SMES, and other engines that need strong magnetic-field infrastructure.
+
 So the most natural research path from here is:
 
 1. coil / winding geometry
@@ -79,7 +93,10 @@ So the most natural research path from here is:
 5. material screening / splice topology / ramp stability
 6. splice matrix / ramp dynamics
 7. material candidate ranking
-8. then deeper material screening
+8. critical-state / pinning / strain effects
+9. quench dynamics / protection system
+10. multiphysics / uncertainty / fault tolerance
+11. application preset comparison
 
 ## Recommended design workflow
 
@@ -89,6 +106,7 @@ So the most natural research path from here is:
 4. **Run base verdict** via `run_magnet_design_assessment()`  
 5. **Expand research scaffold** across AC-loss/NZPV/joint/uniformity/fatigue/screening  
 6. **Integrate in L4** with `superconducting.magnet.readiness`
+7. **Inspect v1 layers** through critical-state/pinning/strain/quench dynamics/protection/multiphysics/uncertainty/presets as needed
 
 ## Core concept notes (for new readers)
 
@@ -234,13 +252,15 @@ python3 -m pytest tests/ -q --tb=no
 
 Current local verification baseline:
 
-- inside the package root: `14 passed`
+- inside the package root: `99 passed`
 - outside the package root: collection works after adding `tests/conftest.py`
 - coverage:
   - core: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli
   - foundation scaffold: geometry/ac_loss/quench_propagation
   - extended scaffold: joint/uniformity/fatigue
   - material scaffold: screening/splice/ramp/splice_matrix/ramp_dynamics/ranking
+  - v1 physics/dynamics: material_database/critical_state/pinning/strain/quench_dynamics/protection
+  - v1 research tools: multiphysics/uncertainty/sensitivity/fault_tolerance/application_presets
 
 Contract safety guard:
 
@@ -268,6 +288,12 @@ Verification:
 
 ```bash
 python3 scripts/verify_signature.py
+```
+
+Release gate:
+
+```bash
+python3 scripts/release_check.py
 ```
 
 Regenerate signature manifest:
@@ -313,7 +339,7 @@ python3 -m superconducting_magnet_stack.cli --input-json examples/material_compa
 cd _staging/Superconducting_Magnet_Stack
 git init
 git add .
-git commit -m "Release Superconducting Magnet Stack v0.9.0"
+git commit -m "Release Superconducting Magnet Stack v1.0.0"
 git branch -M main
 git remote add origin https://github.com/qquartsco-svg/SuperConductor.git
 git push -u origin main

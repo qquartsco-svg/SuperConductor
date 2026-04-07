@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.0
+
+- aligned package metadata, README/README_EN, and release hygiene with the implemented `__version__ = "1.0.0"`
+- promoted the stack from a narrow `0.9.0` material-ranking scaffold to a five-layer superconducting magnet foundation:
+  - Layer 1: material database, critical-state, pinning, and strain-effects proxies
+  - Layer 2: RK4 quench dynamics and protection-system screening
+  - Layer 3: AC-loss decomposition and multiphysics rollup
+  - Layer 4: sensitivity, uncertainty, and fault-tolerance research tools
+  - Layer 5: application presets for LHC/HL-LHC/SPARC/MRI/SMES-style scenarios
+- added release hygiene scripts for package identity checks, generated-cache cleanup, and one-command release checking
+- expanded SHA-256 signature generation to cover the full source/documentation release surface while excluding generated artifacts
+
 ## 0.9.0
 
 - added CLI material-candidate comparison mode via `--compare-materials`

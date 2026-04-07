@@ -1,17 +1,17 @@
-> **English:** [README_EN.md](README_EN.md)
+> **한국어 (정본).** English: [README_EN.md](README_EN.md)
 
 # Superconducting Magnet Stack
 
 초전도체 전체를 한 번에 완성하려는 엔진이 아니라,
 **초전도 자석의 설계·평가·readiness 판정**에 집중한 L1 독립 스택입니다.
 
-Version: `0.9.0`
+Version: `1.0.0`
 
 한 줄 정의:
 **재료(Tc/Jc/Bc2) + 냉각 + 전자기/응력 + quench 위험을 하나의 Ω 판정으로 묶는 설계 커널**.
 
 해석 가이드:
-현재 `0.9.0`은 연구/설계 스캐폴드를 폭넓게 포함한 버전이며, 완성형 실험/공정 대체 엔진을 뜻하지 않는다.
+현재 `1.0.0`은 초전도 자석 연구/설계 foundation의 5계층이 정리된 안정 릴리스이며, 완성형 실험/공정 대체 엔진을 뜻하지 않는다.
 
 상세 문서:
 
@@ -54,7 +54,7 @@ Version: `0.9.0`
 
 이 스택은 아직 “초전도체 연구 전체”는 아니지만,
 초전도 자석 연구로 나아가기 위한 다음 연구 축들을 기초 레이어로 올렸습니다.
-이 확장 축은 `v0.3.0` 무렵의 기초 연구 스캐폴딩에서 시작해 현재 `0.9.0`까지 단계적으로 확장됐습니다.
+이 확장 축은 `v0.3.0` 무렵의 기초 연구 스캐폴딩에서 시작해 현재 `1.0.0`까지 단계적으로 확장됐습니다.
 
 - `coil_geometry`: 권선 길이, fill proxy, hoop load index
 - `ac_loss`: 동적 sweep 조건에서의 AC loss screening
@@ -69,6 +69,20 @@ Version: `0.9.0`
 - `ramp_dynamics`: 유도전압, 동적 heating, 안정 창(window) screening
 - `material_ranking`: 같은 설계 조건에서 후보 재료군을 비교·랭킹하는 screening 레이어
 
+## v1.0.0 5계층 구조
+
+`1.0.0`의 핵심은 “초전도 현상 전체를 해결했다”가 아니라, **초전도 자석을 연구/설계 관점에서 안정적으로 읽는 5계층 foundation**이 코드로 정리됐다는 점입니다.
+
+| 계층 | 모듈 | 역할 |
+|---|---|---|
+| Layer 1 — Physics Foundation | `material_database`, `critical_state`, `pinning`, `strain_effects` | 재료군, 임계상태, 보텍스 피닝, 변형률 derating |
+| Layer 2 — Transient Dynamics | `quench_dynamics`, `protection_system` | RK4 quench 동역학, MIIT/dump resistor/protection screening |
+| Layer 3 — Multi-Physics | `ac_loss_decomposition`, `multiphysics_engine` | AC loss 분해, 열·전자기·기계 proxy 통합 |
+| Layer 4 — Research Tools | `sensitivity_analysis`, `uncertainty_quantification`, `fault_tolerance` | 민감도, 불확실성, 고장 허용성 |
+| Layer 5 — Application Presets | `application_presets` | LHC/HL-LHC/SPARC/MRI/SMES 스타일 기준점 비교 |
+
+이 계층은 고정밀 FEM/실험 장비를 대체하지 않습니다. 대신 MRF, Space Gate, Fusion, MRI, SMES 같은 상위 엔진이 “강한 자기장 인프라를 쓸 수 있는가”를 빠르게 스크리닝할 수 있게 하는 하부 readiness 언어입니다.
+
 즉 현재 가장 자연스러운 확장 순서는:
 
 1. 자석 형상/권선 구조
@@ -78,7 +92,10 @@ Version: `0.9.0`
 5. material screening / splice topology / ramp stability
 6. splice matrix / ramp dynamics
 7. material candidate ranking
-8. 그 다음 재료 탐색/스크리닝 심화
+8. critical-state / pinning / strain effects
+9. quench dynamics / protection system
+10. multiphysics / uncertainty / fault tolerance
+11. application presets 기반 응용별 비교
 
 ## 설계 과정 (권장 워크플로)
 
@@ -88,6 +105,7 @@ Version: `0.9.0`
 4. **기본 판정**: `run_magnet_design_assessment()`로 readiness + quench 산출  
 5. **연구 발판 확장**: AC loss/NZPV/joint/uniformity/fatigue/screening까지 순차 확장  
 6. **L4 통합**: `superconducting.magnet.readiness` 노드로 상위 시나리오에 삽입  
+7. **v1 계층 검사**: critical-state/pinning/strain/quench dynamics/protection/multiphysics/uncertainty/presets를 필요에 따라 보조 스크리닝으로 호출
 
 ## 핵심 개념 해설 (낯선 독자용)
 
@@ -236,13 +254,15 @@ python3 -m pytest tests/ -q --tb=no
 
 현재 로컬 점검 기준:
 
-- 패키지 루트 내부: `14 passed`
+- 패키지 루트 내부: `99 passed`
 - 패키지 루트 외부: `tests/conftest.py` 추가 후 수집 가능
 - 범주:
   - core: contracts/material/thermal/safety/observer/pipeline/engine_ref/cli
   - foundation scaffold: geometry/ac_loss/quench_propagation
   - extended scaffold: joint/uniformity/fatigue
   - material scaffold: screening/splice/ramp/splice_matrix/ramp_dynamics/ranking
+  - v1 physics/dynamics: material_database/critical_state/pinning/strain/quench_dynamics/protection
+  - v1 research tools: multiphysics/uncertainty/sensitivity/fault_tolerance/application_presets
 
 계약층 안전장치:
 
@@ -270,6 +290,12 @@ python3 -m pytest tests/ -q --tb=no
 
 ```bash
 python3 scripts/verify_signature.py
+```
+
+릴리스 게이트:
+
+```bash
+python3 scripts/release_check.py
 ```
 
 서명 재생성:
@@ -315,7 +341,7 @@ python3 -m superconducting_magnet_stack.cli --input-json examples/material_compa
 cd _staging/Superconducting_Magnet_Stack
 git init
 git add .
-git commit -m "Release Superconducting Magnet Stack v0.9.0"
+git commit -m "Release Superconducting Magnet Stack v1.0.0"
 git branch -M main
 git remote add origin https://github.com/qquartsco-svg/SuperConductor.git
 git push -u origin main

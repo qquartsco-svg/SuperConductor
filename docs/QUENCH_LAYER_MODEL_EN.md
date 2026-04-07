@@ -1,4 +1,4 @@
-> **Korean (canonical):** [QUENCH_LAYER_MODEL.md](QUENCH_LAYER_MODEL.md)
+> **English.** Korean (정본): [QUENCH_LAYER_MODEL.md](QUENCH_LAYER_MODEL.md)
 
 # Quench Layer Model
 
@@ -24,6 +24,11 @@ Document quench evaluation as a layered model rather than a single scalar.
    - combines ramp rate/induced voltage/dynamic heating for protection-window checks
    - supports dump-window sensitivity reasoning
 
+5. **Dynamic + Protection Layer (`quench_dynamics`, `protection_system`)**
+   - uses a 1D RK4 hotspot/normal-zone proxy to inspect time response
+   - screens MIIT, dump resistor, current decay, and peak voltage
+   - remains a candidate comparison aid, not a final protection-system design authority
+
 ## Output Interpretation
 
 - Current implementation is screening-oriented, not a protection relay replacement.
@@ -34,4 +39,4 @@ Document quench evaluation as a layered model rather than a single scalar.
 - application-specific protection policies (Fusion/MRI/Lab)
 - stronger coupling between joint hotspot and propagation layers
 - richer dump resistor / energy extraction modeling
-
+- application-preset policies that weight quench dynamics and protection-system outputs differently

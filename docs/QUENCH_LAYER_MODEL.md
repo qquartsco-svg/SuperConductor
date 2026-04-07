@@ -1,4 +1,4 @@
-> **English:** [QUENCH_LAYER_MODEL_EN.md](QUENCH_LAYER_MODEL_EN.md)
+> **한국어 (정본).** English: [QUENCH_LAYER_MODEL_EN.md](QUENCH_LAYER_MODEL_EN.md)
 
 # Quench Layer Model
 
@@ -24,6 +24,11 @@ quench 평가를 단일 점수가 아니라 레이어 구조로 이해하도록 
    - 램프 속도/유도전압/동적 heating을 함께 보고 보호 여유창(window) 점검
    - dump window 관련 설계 민감도를 확인
 
+5. **Dynamic + Protection Layer (`quench_dynamics`, `protection_system`)**
+   - RK4 기반 1D hotspot/normal-zone proxy로 시간응답을 확인
+   - MIIT, dump resistor, current decay, peak voltage를 screening
+   - 실제 보호 시스템 설계의 최종 근거가 아니라 후보 설계 비교용 보조 레이어
+
 ## 출력 해석
 
 - 현재 구현은 보호계전기 대체가 아니라 설계 판단용 screening이다.
@@ -34,4 +39,4 @@ quench 평가를 단일 점수가 아니라 레이어 구조로 이해하도록 
 - 응용처별 보호 정책 프로파일 (Fusion/MRI/Lab)
 - joint hotspot과 propagation coupling 강화
 - dump resistor/energy extraction 모델 상세화
-
+- quench dynamics와 protection-system 결과를 응용 preset별 정책으로 가중

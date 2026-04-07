@@ -1,4 +1,4 @@
-> **English:** [VERSIONING_POLICY_EN.md](VERSIONING_POLICY_EN.md)
+> **한국어 (정본).** English: [VERSIONING_POLICY_EN.md](VERSIONING_POLICY_EN.md)
 
 # Superconducting Magnet Stack Versioning Policy
 
@@ -19,16 +19,16 @@
 - `0.2.x`: L4 `engine_ref` 연동과 CLI 운영 경로
 - `0.3.x` ~ `0.5.x`: 연구 scaffold 확장(geometry/ac_loss/quench/joint/uniformity/fatigue/screening)
 - `0.9.0`: 연구 확장 축이 넓어진 상태의 통합 버전 (완성형 production solver 의미 아님)
+- `1.0.0`: 5계층 초전도 자석 foundation 정렬(material/critical-state/pinning/strain/quench/protection/multiphysics/uncertainty/presets)
 
 ## 상향 기준 (권장)
 
 - **Patch (`x.y.Z`)**: 문서 정합, 경미한 계산 보정, 테스트 보강
 - **Minor (`x.Y.z`)**: 신규 연구 레이어/계약 확장, CLI/adapter 기능 확장
-- **Major (`X.y.z`)**: 계약 파괴적 변경 또는 제품 포지셔닝 변경
+- **Major (`X.y.z`)**: 계약 파괴적 변경, 계층 안정화, 또는 제품 포지셔닝 변경
 
 ## 버전과 기대치 문장 템플릿
 
 릴리즈 노트/README에 아래 문장을 유지한다.
 
 `이 버전은 연구/설계 스캐폴드 확장판이며, 고정밀 실험/공정 대체를 목표로 하지 않는다.`
-

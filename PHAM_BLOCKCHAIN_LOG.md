@@ -1,5 +1,17 @@
 # PHAM_BLOCKCHAIN_LOG
 
+## 2026-04-08
+
+- aligned `VERSION`, `pyproject.toml`, README/README_EN, and changelog with `__version__ = "1.0.0"`
+- documented the five-layer superconducting magnet foundation:
+  - material database / critical state / pinning / strain effects
+  - quench dynamics / protection system
+  - AC-loss decomposition / multiphysics rollup
+  - sensitivity / uncertainty / fault tolerance
+  - application presets
+- added release hygiene checks and generated-artifact cleanup
+- expanded the SHA-256 signature manifest to cover the full release surface while excluding generated caches
+
 ## 2026-03-27
 
 - added superconducting magnet research scaffold layers

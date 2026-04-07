@@ -7,49 +7,33 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "SIGNATURE.sha256"
 
-SIGNED_FILES = [
-    "README.md",
-    "README_EN.md",
-    "docs/VERSIONING_POLICY.md",
-    "docs/VERSIONING_POLICY_EN.md",
-    "docs/PHYSICS_PROXY_LIMITATIONS.md",
-    "docs/PHYSICS_PROXY_LIMITATIONS_EN.md",
-    "docs/QUENCH_LAYER_MODEL.md",
-    "docs/QUENCH_LAYER_MODEL_EN.md",
-    "CHANGELOG.md",
-    "BLOCKCHAIN_INFO.md",
-    "PHAM_BLOCKCHAIN_LOG.md",
-    "pyproject.toml",
-    "VERSION",
-    "examples/sample_payload.json",
-    "examples/material_compare_payload.json",
-    "superconducting_magnet_stack/__init__.py",
-    "superconducting_magnet_stack/contracts.py",
-    "superconducting_magnet_stack/material.py",
-    "superconducting_magnet_stack/thermal.py",
-    "superconducting_magnet_stack/electromagnetic.py",
-    "superconducting_magnet_stack/safety.py",
-    "superconducting_magnet_stack/observer.py",
-    "superconducting_magnet_stack/pipeline.py",
-    "superconducting_magnet_stack/engine_ref_adapter.py",
-    "superconducting_magnet_stack/cli.py",
-    "superconducting_magnet_stack/coil_geometry.py",
-    "superconducting_magnet_stack/ac_loss.py",
-    "superconducting_magnet_stack/quench_propagation.py",
-    "superconducting_magnet_stack/joint_resistance.py",
-    "superconducting_magnet_stack/field_uniformity.py",
-    "superconducting_magnet_stack/mechanical_fatigue.py",
-    "superconducting_magnet_stack/material_screening.py",
-    "superconducting_magnet_stack/material_ranking.py",
-    "superconducting_magnet_stack/splice_topology.py",
-    "superconducting_magnet_stack/splice_matrix.py",
-    "superconducting_magnet_stack/ramp_dynamics.py",
-    "superconducting_magnet_stack/ramp_profile.py",
-    "tests/test_superconducting_magnet_stack.py",
-    "tests/conftest.py",
-    "scripts/verify_signature.py",
-    "scripts/generate_signature.py",
-]
+INCLUDE_SUFFIXES = {".md", ".py", ".toml", ".json"}
+INCLUDE_NAMES = {"VERSION", "LICENSE"}
+EXCLUDED_PARTS = {
+    ".git",
+    ".pytest_cache",
+    "__pycache__",
+    "build",
+    "dist",
+}
+
+
+def should_sign(path: Path) -> bool:
+    rel_parts = set(path.relative_to(ROOT).parts)
+    if rel_parts & EXCLUDED_PARTS:
+        return False
+    if any(part.endswith(".egg-info") for part in rel_parts):
+        return False
+    if path.name == MANIFEST.name:
+        return False
+    return path.name in INCLUDE_NAMES or path.suffix in INCLUDE_SUFFIXES
+
+
+def signed_files() -> list[Path]:
+    return sorted(
+        (path for path in ROOT.rglob("*") if path.is_file() and should_sign(path)),
+        key=lambda path: path.relative_to(ROOT).as_posix(),
+    )
 
 
 def sha256_of(path: Path) -> str:
@@ -62,10 +46,8 @@ def sha256_of(path: Path) -> str:
 
 def main() -> int:
     lines = []
-    for rel in SIGNED_FILES:
-        target = ROOT / rel
-        if not target.exists():
-            raise FileNotFoundError(f"missing signed file: {rel}")
+    for target in signed_files():
+        rel = target.relative_to(ROOT).as_posix()
         lines.append(f"{sha256_of(target)}  {rel}")
     MANIFEST.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"updated {MANIFEST.name} with {len(lines)} entries")
